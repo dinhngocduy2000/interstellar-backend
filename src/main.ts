@@ -1,9 +1,21 @@
 import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "./app.module";
+import { SwaggerModule } from "@nestjs/swagger";
+import { DocumentBuilder } from "@nestjs/swagger";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Configure Swagger
+  const config = new DocumentBuilder()
+    .setTitle("Interstellar API")
+    .setDescription("Interstellar API Documentation")
+    .setVersion("1.0")
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup("api", app, document);
 
   // Enable CORS
   app.enableCors({ origin: "*" });

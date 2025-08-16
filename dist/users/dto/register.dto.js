@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RegisterDto = void 0;
+const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 class RegisterDto {
     email;
@@ -19,6 +20,10 @@ class RegisterDto {
 exports.RegisterDto = RegisterDto;
 __decorate([
     (0, class_validator_1.IsEmail)({}, { message: "Please provide a valid email address" }),
+    (0, swagger_1.ApiProperty)({
+        description: "The email of the user",
+        example: "john@example.com",
+    }),
     __metadata("design:type", String)
 ], RegisterDto.prototype, "email", void 0);
 __decorate([
@@ -28,6 +33,7 @@ __decorate([
     (0, class_validator_1.Matches)(/^[a-zA-Z0-9_]+$/, {
         message: "Username can only contain letters, numbers, and underscores",
     }),
+    (0, swagger_1.ApiProperty)({ description: "The username of the user", example: "John Doe" }),
     __metadata("design:type", String)
 ], RegisterDto.prototype, "username", void 0);
 __decorate([
@@ -36,6 +42,10 @@ __decorate([
     (0, class_validator_1.MaxLength)(100, { message: "Password must not exceed 100 characters" }),
     (0, class_validator_1.Matches)(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
         message: "Password must contain at least one lowercase letter, one uppercase letter, and one number",
+    }),
+    (0, swagger_1.ApiProperty)({
+        description: "The password of the user",
+        example: "Password123",
     }),
     __metadata("design:type", String)
 ], RegisterDto.prototype, "password", void 0);

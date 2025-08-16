@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import {
   IsEmail,
   IsString,
@@ -8,6 +9,10 @@ import {
 
 export class RegisterDto {
   @IsEmail({}, { message: "Please provide a valid email address" })
+  @ApiProperty({
+    description: "The email of the user",
+    example: "john@example.com",
+  })
   email: string;
 
   @IsString()
@@ -16,6 +21,7 @@ export class RegisterDto {
   @Matches(/^[a-zA-Z0-9_]+$/, {
     message: "Username can only contain letters, numbers, and underscores",
   })
+  @ApiProperty({ description: "The username of the user", example: "John Doe" })
   username: string;
 
   @IsString()
@@ -24,6 +30,10 @@ export class RegisterDto {
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
     message:
       "Password must contain at least one lowercase letter, one uppercase letter, and one number",
+  })
+  @ApiProperty({
+    description: "The password of the user",
+    example: "Password123",
   })
   password: string;
 }

@@ -16,6 +16,7 @@ exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
 const register_dto_1 = require("./dto/register.dto");
+const swagger_1 = require("@nestjs/swagger");
 let UsersController = class UsersController {
     usersService;
     constructor(usersService) {
@@ -28,6 +29,10 @@ let UsersController = class UsersController {
 exports.UsersController = UsersController;
 __decorate([
     (0, common_1.Post)("register"),
+    (0, swagger_1.ApiOperation)({ summary: "Register a new user" }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: "User registered successfully" }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: "Validation errors" }),
+    (0, swagger_1.ApiResponse)({ status: 409, description: "Email or username already exists" }),
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -35,6 +40,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "register", null);
 exports.UsersController = UsersController = __decorate([
+    (0, swagger_1.ApiTags)("users"),
     (0, common_1.Controller)("users"),
     __metadata("design:paramtypes", [users_service_1.UsersService])
 ], UsersController);
