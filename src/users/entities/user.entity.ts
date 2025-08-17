@@ -11,21 +11,21 @@ export class User {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: false })
   email!: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: false })
   username!: string;
 
-  @Column()
+  @Column({ nullable: false })
   password!: string;
 
-  @Column()
+  @Column({ nullable: false })
   role!: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ nullable: true })
   createdAt!: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ nullable: true })
   updatedAt!: Date;
 }
