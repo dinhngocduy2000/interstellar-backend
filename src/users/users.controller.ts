@@ -11,7 +11,11 @@ export class UsersController {
 
   @Post("register")
   @ApiOperation({ summary: "Register a new user" })
-  @ApiResponse({ status: 201, description: "User registered successfully" })
+  @ApiResponse({
+    status: 201,
+    description: "User registered successfully",
+    type: UserResponseDto,
+  })
   @ApiResponse({ status: 400, description: "Validation errors" })
   @ApiResponse({ status: 409, description: "Email or username already exists" })
   @HttpCode(HttpStatus.CREATED)

@@ -7,7 +7,7 @@
   "type": "module",
   "license": "UNLICENSED",
   "scripts": {
-    "build": "npx ts-patch tsc && nest build",
+    "build": "tsc && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",

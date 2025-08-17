@@ -29,6 +29,12 @@ export class User {
   @Column({ nullable: false })
   role!: string;
 
+  @Column({ default: true })
+  isActive!: boolean;
+
+  @Column({ nullable: true })
+  lastLoginAt?: Date;
+
   @CreateDateColumn({ nullable: true })
   createdAt!: Date;
 
