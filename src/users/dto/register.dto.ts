@@ -13,7 +13,7 @@ export class RegisterDto {
     description: "The email of the user",
     example: "john@example.com",
   })
-  email: string;
+  email!: string;
 
   @IsString()
   @MinLength(3, { message: "Username must be at least 3 characters long" })
@@ -22,7 +22,7 @@ export class RegisterDto {
     message: "Username can only contain letters, numbers, and underscores",
   })
   @ApiProperty({ description: "The username of the user", example: "John Doe" })
-  username: string;
+  username!: string;
 
   @IsString()
   @MinLength(8, { message: "Password must be at least 8 characters long" })
@@ -35,5 +35,5 @@ export class RegisterDto {
     description: "The password of the user",
     example: "Password123",
   })
-  password: string;
+  password!: string;
 }

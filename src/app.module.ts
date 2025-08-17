@@ -1,11 +1,11 @@
 import { Module } from "@nestjs/common";
 import { APP_PIPE } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
-import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
+import { AppController } from "./app.controller.js";
+import { AppService } from "./app.service.js";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { UsersModule } from "./users/users.module";
-import { User as UserEntity } from "./users/entities/user.entity";
+import { UsersModule } from "./users/users.module.js";
+import { User as UserEntity } from "./users/entities/user.entity.js";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 @Module({
   imports: [

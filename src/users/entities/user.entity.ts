@@ -21,6 +21,12 @@ export class User {
   password!: string;
 
   @Column({ nullable: false })
+  firstName!: string;
+
+  @Column({ nullable: false })
+  lastName!: string;
+
+  @Column({ nullable: false })
   role!: string;
 
   @CreateDateColumn({ nullable: true })
