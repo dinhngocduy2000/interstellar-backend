@@ -7,7 +7,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { UsersModule } from "./users/users.module";
 import { User as UserEntity } from "./users/entities/user.entity";
 import { ConfigModule } from "@nestjs/config";
-console.log(process.env.POSTGRES_PASSWORD);
 @Module({
   imports: [
     ConfigModule.forRoot({
