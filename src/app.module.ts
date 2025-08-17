@@ -6,22 +6,28 @@ import { AppService } from "./app.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UsersModule } from "./users/users.module";
 import { User as UserEntity } from "./users/entities/user.entity";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // Makes ConfigModule available globally
       envFilePath: ".env", // Path to your .env file
     }),
-    TypeOrmModule.forRoot({
-      type: "postgres",
-      host: process.env.POSTGRES_HOST,
-      port: parseInt(process.env.POSTGRES_PORT || "5432"),
-      username: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD ?? "",
-      database: process.env.POSTGRES_DB,
-      entities: [UserEntity],
-      synchronize: true, // set to false in production
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: "postgres",
+        host: configService.get<string>("POSTGRES_HOST", "localhost"),
+        port: configService.get<number>("POSTGRES_PORT", 5432),
+        username: configService.get<string>("POSTGRES_USER"),
+        password: configService.get<string>("POSTGRES_PASSWORD"),
+        database: configService.get<string>("POSTGRES_DB"),
+        entities: [UserEntity],
+        migrations: ["dist/src/migrations/*.js"], // Path to compiled migration files
+        migrationsRun: false, // Set to true to run migrations automatically on startup
+        synchronize: false, // Disable in production to use migrations instead
+      }),
+      inject: [ConfigService],
     }),
     UsersModule,
   ],
