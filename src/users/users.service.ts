@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  ConflictException,
-  BadRequestException,
-} from "@nestjs/common";
+import { Injectable, ConflictException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import * as bcrypt from "bcryptjs";
@@ -14,7 +10,7 @@ import { UserResponseDto } from "./dto/user-response.dto.js";
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>
+    private usersRepository: Repository<User>,
   ) {}
 
   async register(registerDto: RegisterDto): Promise<UserResponseDto> {
@@ -52,19 +48,19 @@ export class UsersService {
     const savedUser = await this.usersRepository.save(newUser);
 
     // Return user data without password
-    const { password: _, ...userResponse } = savedUser;
+    const { password: _password, ...userResponse } = savedUser;
     return userResponse as UserResponseDto;
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { email } });
+    return this.usersRepository.findOne({ where: { email: email } });
   }
 
   async findByUsername(username: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { username } });
+    return this.usersRepository.findOne({ where: { username: username } });
   }
 
   async findById(id: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { id } });
+    return this.usersRepository.findOne({ where: { id: id } });
   }
 }
