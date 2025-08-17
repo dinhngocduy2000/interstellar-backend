@@ -6,16 +6,21 @@ import { AppService } from "./app.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UsersModule } from "./users/users.module";
 import { User as UserEntity } from "./users/entities/user.entity";
-
+import { ConfigModule } from "@nestjs/config";
+console.log(process.env.POSTGRES_PASSWORD);
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // Makes ConfigModule available globally
+      envFilePath: ".env", // Path to your .env file
+    }),
     TypeOrmModule.forRoot({
       type: "postgres",
-      host: "localhost",
-      port: 5432,
-      username: "your_username",
-      password: "your_password",
-      database: "your_database",
+      host: process.env.POSTGRES_HOST,
+      port: parseInt(process.env.POSTGRES_PORT || "5432"),
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD ?? "",
+      database: process.env.POSTGRES_DB,
       entities: [UserEntity],
       synchronize: true, // set to false in production
     }),
