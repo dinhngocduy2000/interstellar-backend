@@ -1,8 +1,8 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { UserRepository } from "../users/user.repository.js";
-import { RegisterDto } from "../users/dto/register.dto.js";
+import { RegisterDto } from "../../dto/register.dto.js";
 import bcrypt from "bcryptjs";
-import { User } from "../users/entities/user.entity.js";
+import { User } from "../../entities/user.entity.js";
 import { v4 as uuidv4 } from "uuid";
 
 @Injectable()

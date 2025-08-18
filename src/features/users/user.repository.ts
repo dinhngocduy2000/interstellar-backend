@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, SelectQueryBuilder, In } from "typeorm";
-import { User } from "./entities/user.entity.js";
+import { User } from "../../entities/user.entity.js";
 
 @Injectable()
 export class UserRepository {
