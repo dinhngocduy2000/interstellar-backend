@@ -2,9 +2,10 @@ import { Module } from "@nestjs/common";
 import { APP_PIPE } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { UsersModule } from "./users/users.module.js";
-import { User as UserEntity } from "./users/entities/user.entity.js";
+import { UsersModule } from "./features/users/users.module.js";
+import { User as UserEntity } from "./features/users/entities/user.entity.js";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { AuthModule } from "./features/auth/auth.module.js";
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -28,6 +29,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
       inject: [ConfigService],
     }),
     UsersModule,
+    AuthModule,
   ],
   providers: [
     {

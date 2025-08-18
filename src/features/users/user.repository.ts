@@ -16,8 +16,22 @@ export class UserRepository {
     return this.repository.save(user);
   }
 
+  async edit(id: string, data: User): Promise<unknown> {
+    await this.repository.update(id, data);
+    return;
+  }
+
+  async get(id: string): Promise<User | null> {
+    return this.repository.findOne({ where: { id: id } });
+  }
+
   async save(user: User): Promise<User> {
     return this.repository.save(user);
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const result = await this.repository.delete(id);
+    return result.affected ? result.affected > 0 : false;
   }
 
   async findById(id: string): Promise<User | null> {
@@ -29,7 +43,7 @@ export class UserRepository {
   }
 
   async findByUsername(username: string): Promise<User | null> {
-    return this.repository.findOne({ where: { username } });
+    return this.repository.findOne({ where: { username: username } });
   }
 
   async findAll(): Promise<User[]> {
@@ -39,11 +53,6 @@ export class UserRepository {
   async update(id: string, updateData: Partial<User>): Promise<User | null> {
     await this.repository.update(id, updateData);
     return this.findById(id);
-  }
-
-  async delete(id: string): Promise<boolean> {
-    const result = await this.repository.delete(id);
-    return result.affected ? result.affected > 0 : false;
   }
 
   async softDelete(id: string): Promise<boolean> {

@@ -6,7 +6,11 @@ import { AppModule } from "./app.module.js";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // Enable CORS
+  app.enableCors({ origin: "*" });
 
+  // Set global prefix
+  app.setGlobalPrefix("/api/v1/");
   // Configure Swagger
   const config = new DocumentBuilder()
     .setTitle("Interstellar API")
@@ -16,12 +20,6 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, document);
-
-  // Enable CORS
-  app.enableCors({ origin: "*" });
-
-  // Set global prefix
-  app.setGlobalPrefix("/api/v1/");
 
   // Global validation pipe
   app.useGlobalPipes(

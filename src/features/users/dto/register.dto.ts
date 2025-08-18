@@ -18,9 +18,6 @@ export class RegisterDto {
   @IsString()
   @MinLength(3, { message: "Username must be at least 3 characters long" })
   @MaxLength(20, { message: "Username must not exceed 20 characters" })
-  @Matches(/^[a-zA-Z0-9_]+$/, {
-    message: "Username can only contain letters, numbers, and underscores",
-  })
   @ApiProperty({ description: "The username of the user", example: "John Doe" })
   username!: string;
 
@@ -36,4 +33,20 @@ export class RegisterDto {
     example: "Password123",
   })
   password!: string;
+
+  @IsString()
+  @ApiProperty({
+    description: "The first name of the user",
+    example: "John",
+  })
+  firstName!: string;
+
+  @IsString()
+  @MinLength(3, { message: "Last name must be at least 3 characters long" })
+  @MaxLength(20, { message: "Last name must not exceed 20 characters" })
+  @ApiProperty({
+    description: "The last name of the user",
+    example: "Doe",
+  })
+  lastName!: string;
 }
