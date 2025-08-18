@@ -14,7 +14,34 @@ services:
       - "${POSTGRES_PORT}:5432" # Host port from .env, container port fixed
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - interstellar-network
     restart: always
+
+  interstellar-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: interstellar-backend
+    ports:
+      - "${PORT}:3000"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - PORT=${PORT}
+    depends_on:
+      - postgres_interstellar
+    restart: always
+    networks:
+      - interstellar-network
 
 volumes:
   postgres_data:
+
+networks:
+  interstellar-network:
+    driver: bridge
+    name: interstellar-network
