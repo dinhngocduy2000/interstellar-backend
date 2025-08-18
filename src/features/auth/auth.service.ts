@@ -1,37 +1,92 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
 import { UserRepository } from "../users/user.repository.js";
 import { RegisterDto } from "../../dto/register.dto.js";
 import bcrypt from "bcryptjs";
 import { User } from "../../entities/user.entity.js";
 import { v4 as uuidv4 } from "uuid";
+import { LoginDto } from "../../dto/login.dto.js";
+import { LoginResponseDto } from "../../dto/login-response.dto.js";
+import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class AuthService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    private jwtService: JwtService
+  ) {}
 
   async register(registerDto: RegisterDto): Promise<unknown> {
-    const existingUser = await this.userRepository.findByUsername(
-      registerDto.username
-    );
-    if (existingUser) {
-      throw new ConflictException(
-        "An account with this username already exist"
+    try {
+      const existingUser = await this.userRepository.findByUsername(
+        registerDto.username
       );
+      if (existingUser) {
+        throw new ConflictException(
+          "An account with this username already exist"
+        );
+      }
+      const hashedPassword = await bcrypt.hash(registerDto.password, 10);
+      const data: User = {
+        id: uuidv4(),
+        email: registerDto.email,
+        username: registerDto.username,
+        password: hashedPassword,
+        firstName: registerDto.firstName,
+        lastName: registerDto.lastName,
+        role: "user",
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      await this.userRepository.create(data);
+      return;
+    } catch (error) {
+      console.error(`ERROR REGISTERING USER: ${error}`);
+      throw new InternalServerErrorException(error);
     }
-    const hashedPassword = await bcrypt.hash(registerDto.password, 10);
-    const data: User = {
-      id: uuidv4(),
-      email: registerDto.email,
-      username: registerDto.username,
-      password: hashedPassword,
-      firstName: registerDto.firstName,
-      lastName: registerDto.lastName,
-      role: "user",
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    await this.userRepository.create(data);
-    return;
+  }
+
+  async login(loginDto: LoginDto): Promise<LoginResponseDto> {
+    try {
+      const user = await this.userRepository.findByUsername(loginDto.username);
+      if (!user) {
+        throw new BadRequestException("Invalid username or password");
+      }
+      const isPasswordValid = await bcrypt.compare(
+        loginDto.password,
+        user.password
+      );
+      if (!isPasswordValid) {
+        throw new BadRequestException("Invalid username or password");
+      }
+      const payload = {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      };
+      const accessToken = this.jwtService.sign(payload, {
+        expiresIn: "1h",
+      });
+      const refreshToken = this.jwtService.sign(payload, {
+        expiresIn: "7d",
+      });
+      return {
+        accessToken,
+        refreshToken,
+        expiresIn: 3600,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+      } as LoginResponseDto;
+    } catch (error) {
+      console.error(`ERROR LOGGING IN: ${error}`);
+      throw new InternalServerErrorException(error);
+    }
   }
 }
