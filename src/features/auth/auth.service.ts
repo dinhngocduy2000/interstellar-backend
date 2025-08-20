@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { UserRepository } from "../users/user.repository.js";
 import { RegisterDto } from "../../dto/register.dto.js";
@@ -85,6 +86,60 @@ export class AuthService {
       } as LoginResponseDto;
     } catch (error) {
       console.error(`ERROR LOGGING IN: ${error}`);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async refreshToken(refreshToken: string): Promise<LoginResponseDto> {
+    try {
+      const decodedRefreshToken = jwt.verify(
+        refreshToken,
+        process.env.JWT_SECRET ?? ""
+      ) as JwtPayload;
+      if (!decodedRefreshToken) {
+        console.log("Invalid refresh token");
+        throw new UnauthorizedException("Invalid refresh token");
+      }
+      if (decodedRefreshToken.exp && decodedRefreshToken.exp < Date.now()) {
+        console.log("Refresh token expired");
+        throw new UnauthorizedException("Refresh token expired");
+      }
+      const user = await this.userRepository.findById(decodedRefreshToken.id);
+      if (!user) {
+        throw new UnauthorizedException("User not found");
+      }
+      const newTokenPayload: JwtPayload = {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        iat: Date.now(),
+      };
+      const newAccessToken = jwt.sign(
+        newTokenPayload,
+        process.env.JWT_SECRET ?? "",
+        {
+          expiresIn: "1h",
+        }
+      );
+      const newRefreshToken = jwt.sign(
+        newTokenPayload,
+        process.env.JWT_SECRET ?? "",
+        {
+          expiresIn: "7d",
+        }
+      );
+
+      return {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+        expiresIn: 3600,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+      } as LoginResponseDto;
+    } catch (error) {
+      console.error(`ERROR REFRESHING TOKEN: ${error}`);
       throw new InternalServerErrorException(error);
     }
   }

@@ -12,6 +12,8 @@ export const authMiddleware = (
     console.log(`No token provided`);
     return res.status(401).json({ message: "Unauthorized" });
   }
+  // TODO: CHECK FOR USER ROLE LATER
+
   const detatchedToken = token.split(" ")[1];
   try {
     const decoded = jwt.verify(detatchedToken, process.env.JWT_SECRET ?? "");

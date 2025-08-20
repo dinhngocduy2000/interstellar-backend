@@ -36,4 +36,17 @@ export class AuthController {
   async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
     return await this.authService.login(loginDto);
   }
+
+  @Post("/refresh")
+  @ApiOperation({ summary: "Refresh a user's session" })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "User logged in successfully",
+    type: LoginResponseDto,
+  })
+  async refreshToken(
+    @Body() { refreshToken }: { refreshToken: string }
+  ): Promise<LoginResponseDto> {
+    return await this.authService.refreshToken(refreshToken);
+  }
 }
