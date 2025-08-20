@@ -11,15 +11,12 @@ import { User } from "../../entities/user.entity.js";
 import { v4 as uuidv4 } from "uuid";
 import { LoginDto } from "../../dto/login.dto.js";
 import { LoginResponseDto } from "../../dto/login-response.dto.js";
-import { JwtService } from "@nestjs/jwt";
 import { JwtPayload } from "src/common/interface/jwt-payload.js";
+import jwt from "jsonwebtoken";
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private userRepository: UserRepository,
-    private jwtService: JwtService
-  ) {}
+  constructor(private userRepository: UserRepository) {}
 
   async register(registerDto: RegisterDto): Promise<unknown> {
     try {
@@ -72,10 +69,10 @@ export class AuthService {
         role: user.role,
         iat: Date.now(),
       };
-      const accessToken = this.jwtService.sign(payload, {
+      const accessToken = jwt.sign(payload, process.env.JWT_SECRET ?? "", {
         expiresIn: "1h",
       });
-      const refreshToken = this.jwtService.sign(payload, {
+      const refreshToken = jwt.sign(payload, process.env.JWT_SECRET ?? "", {
         expiresIn: "7d",
       });
       return {
