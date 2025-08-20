@@ -3,6 +3,7 @@ import { ValidationPipe } from "@nestjs/common";
 import { SwaggerModule } from "@nestjs/swagger";
 import { DocumentBuilder } from "@nestjs/swagger";
 import { AppModule } from "./app.module.js";
+import { loggerMiddleware } from "./middlewares/logger.js";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,6 +12,9 @@ async function bootstrap() {
 
   // Set global prefix
   app.setGlobalPrefix("/api/v1/");
+
+  // Apply middlewares
+  app.use(loggerMiddleware);
   // Configure Swagger
   const config = new DocumentBuilder()
     .setTitle("Interstellar API")

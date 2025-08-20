@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 import { LoginDto } from "../../dto/login.dto.js";
 import { LoginResponseDto } from "../../dto/login-response.dto.js";
 import { JwtService } from "@nestjs/jwt";
+import { JwtPayload } from "src/common/interface/jwt-payload.js";
 
 @Injectable()
 export class AuthService {
@@ -64,11 +65,12 @@ export class AuthService {
       if (!isPasswordValid) {
         throw new BadRequestException("Invalid username or password");
       }
-      const payload = {
+      const payload: JwtPayload = {
         id: user.id,
         username: user.username,
         email: user.email,
         role: user.role,
+        iat: Date.now(),
       };
       const accessToken = this.jwtService.sign(payload, {
         expiresIn: "1h",
@@ -77,7 +79,7 @@ export class AuthService {
         expiresIn: "7d",
       });
       return {
-        accessToken,
+        accessToken: `${accessToken}`,
         refreshToken,
         expiresIn: 3600,
         email: user.email,
