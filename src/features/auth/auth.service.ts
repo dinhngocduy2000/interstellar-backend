@@ -8,12 +8,12 @@ import {
 import { UserRepository } from "../users/user.repository.js";
 import { RegisterDto } from "../../dto/register.dto.js";
 import bcrypt from "bcryptjs";
-import { User } from "../../entities/user.entity.js";
 import { v4 as uuidv4 } from "uuid";
 import { LoginDto } from "../../dto/login.dto.js";
 import { LoginResponseDto } from "../../dto/login-response.dto.js";
 import { JwtPayload } from "src/common/interface/jwt-payload.js";
 import jwt from "jsonwebtoken";
+import { User } from "../../entities/index.js";
 
 @Injectable()
 export class AuthService {
