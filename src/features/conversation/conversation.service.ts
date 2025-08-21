@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { ConversationRepository } from "./conversation.repository.js";
-import { ConversationRequestDTO } from "../../dto/conversation-request.dto.js";
+import { ConversationRequestDTO } from "../../dto/conversation/conversation-request.dto.js";
 import { Pagination } from "../../common/interface/pagination.js";
 import { OrderOption } from "../../common/interface/order-option.js";
 import { Conversation } from "../../entities/index.js";

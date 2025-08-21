@@ -9,7 +9,7 @@ import {
   Min,
 } from "class-validator";
 import { Transform } from "class-transformer";
-import { Pagination } from "../common/interface/pagination.js";
+import { Pagination } from "../../common/interface/pagination.js";
 
 export class ConversationRequestDTO implements Pagination {
   @ApiProperty({
