@@ -1,16 +1,24 @@
-import { Controller, Get, HttpStatus, Query, Request } from "@nestjs/common";
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  HttpStatus,
+  Query,
+  Request,
+  ValidationPipe,
+} from "@nestjs/common";
 import { ConversationService } from "./conversation.service.js";
-import { ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ConversationRequestDTO } from "../../dto/conversation-request.dto.js";
 import { JwtPayload } from "../../common/interface/jwt-payload.js";
 import { ResponseDataWithPagination } from "../../common/interface/response-data-with-pagination.js";
 import { Conversation } from "../../entities/index.js";
-
-@Controller("conversation")
+@ApiTags("conversation")
+@Controller("/conversation")
 export class ConversationController {
   constructor(private readonly conversationService: ConversationService) {}
 
-  @Get("")
+  @Get("/")
   @ApiOperation({ summary: "Get all conversations" })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -18,7 +26,7 @@ export class ConversationController {
     type: ResponseDataWithPagination<Conversation>,
   })
   async getListConversations(
-    @Query() query: ConversationRequestDTO,
+    @Query(ValidationPipe) query: ConversationRequestDTO,
     @Request() req: JwtPayload
   ): Promise<ResponseDataWithPagination<Conversation>> {
     const [conversations, total] =

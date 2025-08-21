@@ -30,16 +30,34 @@ export class ConversationService {
         };
       }
 
+      const conversationQuery: Partial<Conversation> = {};
+      conversationQuery.user_id = user_id;
+      if (query.is_pinned !== undefined) {
+        conversationQuery.is_pinned = query.is_pinned;
+      }
+      if (query.title) {
+        conversationQuery.title = query.title;
+      }
+
+      if (query.created_at) {
+        conversationQuery.created_at = query.created_at;
+      }
+
+      if (query.updated_at) {
+        conversationQuery.updated_at = query.updated_at;
+      }
+
       const [conversations, total] = await Promise.all([
         this.conversationRepository.list(
-          { ...query, user_id: user_id },
+          conversationQuery,
           pagination,
           orderOption
         ),
-        this.conversationRepository.count({ ...query, user_id: user_id }),
+        this.conversationRepository.count(conversationQuery),
       ]);
       return [conversations, total];
     } catch (error) {
+      console.log(`Error in getListConversations: ${error}`);
       throw new InternalServerErrorException(error);
     }
   }

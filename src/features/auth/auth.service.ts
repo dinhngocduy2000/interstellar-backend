@@ -11,7 +11,7 @@ import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 import { LoginDto } from "../../dto/login.dto.js";
 import { LoginResponseDto } from "../../dto/login-response.dto.js";
-import { JwtPayload } from "src/common/interface/jwt-payload.js";
+import { JwtPayload } from "../../common/interface/jwt-payload.js";
 import jwt from "jsonwebtoken";
 import { User } from "../../entities/index.js";
 
