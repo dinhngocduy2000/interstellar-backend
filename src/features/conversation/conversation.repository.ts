@@ -1,0 +1,57 @@
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Pagination } from "../../common/interface/pagination.js";
+import { Conversation } from "../../entities/index.js";
+import { Repository } from "typeorm";
+import { OrderOption } from "../../common/interface/order-option.js";
+
+@Injectable()
+export class ConversationRepository {
+  constructor(
+    @InjectRepository(Conversation)
+    private readonly repository: Repository<Conversation>
+  ) {}
+
+  async create(conversation: Conversation): Promise<unknown> {
+    const newConversation = this.repository.create(conversation);
+    return await this.repository.save(newConversation);
+  }
+
+  async edit(id: string, conversation: Conversation): Promise<unknown> {
+    await this.repository.update(id, conversation);
+    return;
+  }
+
+  async delete(id: string): Promise<unknown> {
+    await this.repository.delete(id);
+    return;
+  }
+
+  async get(
+    conversationQuery: Partial<Conversation>
+  ): Promise<Conversation | null> {
+    return await this.repository.findOne({ where: conversationQuery });
+  }
+
+  async list(
+    conversationQuery: Partial<Conversation>,
+    pagination?: Pagination,
+    orderOption?: OrderOption
+  ): Promise<Conversation[]> {
+    return await this.repository.find({
+      where: conversationQuery,
+      order: orderOption
+        ? {
+            [orderOption?.sort_by ?? "created_at"]:
+              orderOption?.sort_direction ?? "asc",
+          }
+        : undefined,
+      skip: pagination ? (pagination?.page - 1) * pagination?.limit : undefined,
+      take: pagination ? pagination?.limit : undefined,
+    });
+  }
+
+  async count(conversationQuery: Partial<Conversation>): Promise<number> {
+    return await this.repository.count({ where: conversationQuery });
+  }
+}
