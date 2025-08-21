@@ -37,8 +37,8 @@ export class ConversationRepository {
     conversationQuery: Partial<Conversation>,
     pagination?: Pagination,
     orderOption?: OrderOption
-  ): Promise<Conversation[]> {
-    return await this.repository.find({
+  ): Promise<[Conversation[], number]> {
+    return await this.repository.findAndCount({
       where: conversationQuery,
       order: orderOption
         ? {
@@ -49,9 +49,5 @@ export class ConversationRepository {
       skip: pagination ? (pagination?.page - 1) * pagination?.limit : undefined,
       take: pagination ? pagination?.limit : undefined,
     });
-  }
-
-  async count(conversationQuery: Partial<Conversation>): Promise<number> {
-    return await this.repository.count({ where: conversationQuery });
   }
 }

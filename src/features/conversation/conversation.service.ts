@@ -4,11 +4,16 @@ import { ConversationRequestDTO } from "../../dto/conversation/conversation-requ
 import { Pagination } from "../../common/interface/pagination.js";
 import { OrderOption } from "../../common/interface/order-option.js";
 import { Conversation } from "../../entities/index.js";
+import { DataSource } from "typeorm";
 
 @Injectable()
 export class ConversationService {
-  constructor(private readonly conversationRepository: ConversationRepository) {
+  constructor(
+    private readonly conversationRepository: ConversationRepository,
+    private readonly dataSource: DataSource
+  ) {
     this.conversationRepository = conversationRepository;
+    this.dataSource = dataSource;
   }
 
   async getListConversations(
@@ -47,14 +52,11 @@ export class ConversationService {
         conversationQuery.updated_at = query.updated_at;
       }
 
-      const [conversations, total] = await Promise.all([
-        this.conversationRepository.list(
-          conversationQuery,
-          pagination,
-          orderOption
-        ),
-        this.conversationRepository.count(conversationQuery),
-      ]);
+      const [conversations, total] = await this.conversationRepository.list(
+        conversationQuery,
+        pagination,
+        orderOption
+      );
       return [conversations, total];
     } catch (error) {
       console.log(`Error in getListConversations: ${error}`);
