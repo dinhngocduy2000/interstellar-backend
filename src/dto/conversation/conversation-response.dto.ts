@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { ResponseDataWithPagination } from "src/common/interface/response-data-with-pagination.js";
 import { Conversation, Message } from "src/entities/index.js";
 
 export class ConversationResponseDTO implements Conversation {
@@ -66,4 +67,58 @@ export class ConversationResponseDTO implements Conversation {
     example: "2021-01-01",
   })
   deleted_at: string;
+}
+
+export class ListConversationResponseDTO
+  implements ResponseDataWithPagination<ConversationResponseDTO>
+{
+  @ApiProperty({
+    description: "The conversations",
+    type: [ConversationResponseDTO],
+    example: [
+      {
+        id: "123e4567-e89b-12d3-a456-426614174000",
+        title: "My first conversation",
+        description: "This is a description of my first conversation",
+        created_at: "2021-01-01",
+        updated_at: "2021-01-01",
+        is_pinned: false,
+        model: "gpt-4o",
+        user_id: "123e4567-e89b-12d3-a456-426614174000",
+        messages: [],
+        deleted_at: null,
+      },
+      {
+        id: "123e4567-e89b-12d3-a456-426614174001",
+        title: "My second conversation",
+        description: "This is a description of my second conversation",
+        created_at: "2021-01-01",
+        updated_at: "2021-01-01",
+        is_pinned: false,
+        model: "gpt-4o",
+        user_id: "123e4567-e89b-12d3-a456-426614174000",
+        messages: [],
+        deleted_at: null,
+      },
+      {
+        id: "123e4567-e89b-12d3-a456-426614174002",
+        title: "My third conversation",
+        description: "This is a description of my third conversation",
+        created_at: "2021-01-01",
+        updated_at: "2021-01-01",
+        is_pinned: false,
+        model: "gpt-4o",
+        user_id: "123e4567-e89b-12d3-a456-426614174000",
+        messages: [],
+        deleted_at: null,
+      },
+    ],
+  })
+  data: ConversationResponseDTO[];
+
+  @ApiProperty({
+    description: "The total number of conversations",
+    example: 10,
+  })
+  total: number;
 }

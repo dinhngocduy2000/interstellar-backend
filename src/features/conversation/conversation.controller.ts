@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Controller,
   Get,
   HttpStatus,
@@ -11,8 +10,7 @@ import { ConversationService } from "./conversation.service.js";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ConversationRequestDTO } from "../../dto/conversation/conversation-request.dto.js";
 import { JwtPayload } from "../../common/interface/jwt-payload.js";
-import { ResponseDataWithPagination } from "../../common/interface/response-data-with-pagination.js";
-import { ConversationResponseDTO } from "../../dto/conversation/conversation-response.dto.js";
+import { ListConversationResponseDTO } from "../../dto/conversation/conversation-response.dto.js";
 @ApiTags("conversation")
 @Controller("/conversation")
 export class ConversationController {
@@ -23,12 +21,12 @@ export class ConversationController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: "Conversations fetched successfully",
-    type: ResponseDataWithPagination<ConversationResponseDTO>,
+    type: ListConversationResponseDTO,
   })
   async getListConversations(
     @Query(ValidationPipe) query: ConversationRequestDTO,
     @Request() req: JwtPayload
-  ): Promise<ResponseDataWithPagination<ConversationResponseDTO>> {
+  ): Promise<ListConversationResponseDTO> {
     const [conversations, total] =
       await this.conversationService.getListConversations(query, req.id);
     return {
