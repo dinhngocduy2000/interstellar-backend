@@ -59,7 +59,13 @@ export class ConversationService {
         pagination,
         orderOption
       );
-      return [conversations, total];
+      return [
+        conversations.map((conversation) => ({
+          ...conversation,
+          messages: [],
+        })),
+        total,
+      ];
     } catch (error) {
       console.log(`Error in getListConversations: ${error}`);
       throw new InternalServerErrorException(error);
