@@ -17,7 +17,10 @@ export class ConversationRepository {
     return await this.repository.save(newConversation);
   }
 
-  async edit(id: string, conversation: Conversation): Promise<unknown> {
+  async edit(
+    id: string,
+    conversation: Partial<Conversation>
+  ): Promise<unknown> {
     await this.repository.update(id, conversation);
     return;
   }

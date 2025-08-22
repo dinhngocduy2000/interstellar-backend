@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
 import { ConversationRepository } from "./conversation.repository.js";
 import { ConversationRequestDTO } from "../../dto/conversation/conversation-request.dto.js";
 import { Pagination } from "../../common/interface/pagination.js";
@@ -93,6 +97,25 @@ export class ConversationService {
       return;
     } catch (error) {
       console.error(`Error when creating a Conversation: ${error}`);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async deleteConversation(id: string): Promise<unknown> {
+    try {
+      const conversation = await this.conversationRepository.get({ id: id });
+      if (!conversation) {
+        console.error(`Conversation not found or already deleted`);
+        throw new BadRequestException(
+          "Conversation not found or already deleted"
+        );
+      }
+      await this.conversationRepository.edit(id, {
+        deleted_at: new Date().toISOString(),
+      });
+      return;
+    } catch (error) {
+      console.error(`Error when deleting a Conversation: ${error}`);
       throw new InternalServerErrorException(error);
     }
   }

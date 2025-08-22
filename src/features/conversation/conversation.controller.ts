@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
+  Param,
   Post,
   Query,
   Request,
@@ -60,6 +62,22 @@ export class ConversationController {
     );
     const successResponse: SuccessResponse = {
       message: "Conversation created successfully",
+      code: HttpStatus.OK,
+    };
+    return successResponse;
+  }
+
+  @Delete("/:id")
+  @ApiOperation({ summary: "Delete a conversation" })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Conversation deleted successfully",
+    type: SuccessResponse,
+  })
+  async deleteConversation(@Param("id") id: string): Promise<SuccessResponse> {
+    await this.conversationService.deleteConversation(id);
+    const successResponse: SuccessResponse = {
+      message: "Conversation deleted successfully",
       code: HttpStatus.OK,
     };
     return successResponse;
