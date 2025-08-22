@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Pagination } from "../../common/interface/pagination.js";
 import { Conversation } from "../../entities/index.js";
-import { Repository } from "typeorm";
+import { IsNull, Repository } from "typeorm";
 import { OrderOption } from "../../common/interface/order-option.js";
 
 @Injectable()
@@ -30,7 +30,9 @@ export class ConversationRepository {
   async get(
     conversationQuery: Partial<Conversation>
   ): Promise<Conversation | null> {
-    return await this.repository.findOne({ where: conversationQuery });
+    return await this.repository.findOne({
+      where: { ...conversationQuery, deleted_at: IsNull() },
+    });
   }
 
   async list(
@@ -39,7 +41,7 @@ export class ConversationRepository {
     orderOption?: OrderOption
   ): Promise<[Conversation[], number]> {
     return await this.repository.findAndCount({
-      where: conversationQuery,
+      where: { ...conversationQuery, deleted_at: IsNull() },
       order: orderOption
         ? {
             [orderOption?.sort_by ?? "created_at"]:
