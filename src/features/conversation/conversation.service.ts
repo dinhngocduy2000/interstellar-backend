@@ -5,6 +5,8 @@ import { Pagination } from "../../common/interface/pagination.js";
 import { OrderOption } from "../../common/interface/order-option.js";
 import { Conversation } from "../../entities/index.js";
 import { DataSource } from "typeorm";
+import { ConversationCreateRequestDTO } from "../../dto/conversation/conversation-create-request.dto.js";
+import { v4 as uuidv4 } from "uuid";
 
 @Injectable()
 export class ConversationService {
@@ -60,6 +62,31 @@ export class ConversationService {
       return [conversations, total];
     } catch (error) {
       console.log(`Error in getListConversations: ${error}`);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async createConversation(
+    conversationCreateRequest: ConversationCreateRequestDTO,
+    user_id: string
+  ): Promise<unknown> {
+    try {
+      const conversation: Conversation = {
+        id: uuidv4(),
+        title: conversationCreateRequest.title,
+        description: conversationCreateRequest.description,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        deleted_at: undefined,
+        is_pinned: false,
+        model: conversationCreateRequest.model,
+        user_id: user_id,
+        messages: [],
+      };
+      await this.conversationRepository.create(conversation);
+      return;
+    } catch (error) {
+      console.error(`Error when creating a Conversation: ${error}`);
       throw new InternalServerErrorException(error);
     }
   }

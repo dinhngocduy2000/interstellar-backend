@@ -19,7 +19,7 @@ export class ConversationResponseDTO implements Conversation {
     description: "The description of the conversation",
     example: "This is a description of my first conversation",
   })
-  description: string;
+  description?: string;
 
   @ApiProperty({
     description: "The created_at of the conversation",
@@ -66,7 +66,7 @@ export class ConversationResponseDTO implements Conversation {
     description: "The deleted_at of the conversation",
     example: "2021-01-01",
   })
-  deleted_at: string;
+  deleted_at?: string;
 }
 
 export class ListConversationResponseDTO

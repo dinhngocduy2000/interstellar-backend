@@ -17,7 +17,7 @@ export class Conversation {
   title: string;
 
   @Column({ nullable: true })
-  description: string;
+  description?: string;
 
   @Column({ nullable: true, default: new Date().toISOString() })
   created_at: string;
@@ -26,7 +26,7 @@ export class Conversation {
   updated_at: string;
 
   @Column({ nullable: true, default: null })
-  deleted_at: string;
+  deleted_at?: string;
 
   @Column({ default: false })
   is_pinned: boolean;
