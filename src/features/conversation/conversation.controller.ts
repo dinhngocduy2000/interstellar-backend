@@ -14,7 +14,10 @@ import { ConversationService } from "./conversation.service.js";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ConversationRequestDTO } from "../../dto/conversation/conversation-request.dto.js";
 import { JwtPayload } from "../../common/interface/jwt-payload.js";
-import { ListConversationResponseDTO } from "../../dto/conversation/conversation-response.dto.js";
+import {
+  ConversationResponseDTO,
+  ListConversationResponseDTO,
+} from "../../dto/conversation/conversation-response.dto.js";
 import { SuccessResponse } from "../../common/interface/success-response.js";
 import { ConversationCreateRequestDTO } from "../../dto/conversation/conversation-create-request.dto.js";
 import { Request as MiddlewareRequest } from "express";
@@ -23,6 +26,20 @@ import { Request as MiddlewareRequest } from "express";
 @Controller("/conversation")
 export class ConversationController {
   constructor(private readonly conversationService: ConversationService) {}
+
+  @Get("/:id")
+  @ApiOperation({ summary: "Get a conversation" })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Conversation fetched successfully",
+    type: ConversationResponseDTO,
+  })
+  async getConversation(
+    @Param("id") id: string
+  ): Promise<ConversationResponseDTO> {
+    const conversation = await this.conversationService.getConversation(id);
+    return conversation;
+  }
 
   @Get("/")
   @ApiOperation({ summary: "Get all conversations" })

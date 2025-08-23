@@ -22,6 +22,22 @@ export class ConversationService {
     this.dataSource = dataSource;
   }
 
+  async getConversation(id: string): Promise<Conversation> {
+    try {
+      const conversation = await this.conversationRepository.get({ id: id });
+      if (!conversation) {
+        console.error(`Conversation not found or already deleted`);
+        throw new BadRequestException(
+          "Conversation not found or already deleted"
+        );
+      }
+      return conversation;
+    } catch (error) {
+      console.error(`Error in getConversation: ${error}`);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
   async getListConversations(
     query: ConversationRequestDTO,
     user_id: string
@@ -63,13 +79,7 @@ export class ConversationService {
         pagination,
         orderOption
       );
-      return [
-        conversations.map((conversation) => ({
-          ...conversation,
-          messages: [],
-        })),
-        total,
-      ];
+      return [conversations, total];
     } catch (error) {
       console.log(`Error in getListConversations: ${error}`);
       throw new InternalServerErrorException(error);
