@@ -70,7 +70,7 @@ export class Message {
   conversation_id: string;
 
   @ManyToOne(() => Conversation, (conversation) => conversation.messages)
-  conversation: Conversation;
+  conversation?: Conversation;
 }
 
 @Entity("users")
