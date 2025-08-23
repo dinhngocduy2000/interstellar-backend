@@ -27,7 +27,7 @@ export class MessageController {
     type: SuccessResponse,
   })
   async chat(
-    @Body(ValidationPipe) messageRequest: MessageRequestDTO,
+    @Body() messageRequest: MessageRequestDTO,
     @Param("conversation_id") conversation_id: string
   ): Promise<SuccessResponse> {
     await this.messageService.chat(messageRequest, conversation_id);

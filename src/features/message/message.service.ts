@@ -1,18 +1,32 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
 import { MessageRepository } from "./message.repository.js";
 import { MessageRequestDTO } from "../../dto/message/message-request.dto.js";
 import { Message } from "../../entities/index.js";
 import { v4 as uuidv4 } from "uuid";
+import { ConversationRepository } from "../conversation/conversation.repository.js";
 
 @Injectable()
 export class MessageService {
-  constructor(private readonly messageRepository: MessageRepository) {}
+  constructor(
+    private readonly messageRepository: MessageRepository,
+    private readonly conversationRepository: ConversationRepository
+  ) {}
 
   async chat(
     messageRequest: MessageRequestDTO,
     conversation_id: string
   ): Promise<unknown> {
     try {
+      const conversation = await this.conversationRepository.get({
+        id: conversation_id,
+      });
+      if (!conversation) {
+        throw new BadRequestException("Conversation not found");
+      }
       const messageEntity: Message = {
         id: uuidv4(),
         author: "user",
