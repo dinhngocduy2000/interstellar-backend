@@ -21,7 +21,7 @@ export class MessageService {
   async chat(
     messageRequest: MessageRequestDTO,
     conversation_id: string
-  ): Promise<unknown> {
+  ): Promise<string> {
     try {
       const conversation = await this.conversationRepository.get({
         id: conversation_id,
@@ -41,7 +41,7 @@ export class MessageService {
       };
 
       await this.messageRepository.create(messageEntity);
-      return;
+      return "Hello, How are you today?";
     } catch (error) {
       console.log(`Error in creating Message: ${error}`);
       throw new InternalServerErrorException(error);
