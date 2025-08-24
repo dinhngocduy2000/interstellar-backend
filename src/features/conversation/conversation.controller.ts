@@ -35,9 +35,14 @@ export class ConversationController {
     type: ConversationResponseDTO,
   })
   async getConversation(
-    @Param("id") id: string
+    @Param("id") id: string,
+    @Request() req: MiddlewareRequest
   ): Promise<ConversationResponseDTO> {
-    const conversation = await this.conversationService.getConversation(id);
+    const user = req.user as JwtPayload;
+    const conversation = await this.conversationService.getConversation(
+      id,
+      user.id
+    );
     return conversation;
   }
 

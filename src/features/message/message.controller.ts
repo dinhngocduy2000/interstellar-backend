@@ -11,7 +11,6 @@ import {
 import { MessageService } from "./message.service.js";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { MessageRequestDTO } from "../../dto/message/message-request.dto.js";
-import { SuccessResponse } from "../../common/interface/success-response.js";
 import { ListMessageRequestDTO } from "../../dto/message/list-message-request.dto.js";
 import { ListMessageResponseDTO } from "../../dto/message/list-message-response.dto.js";
 import { Response } from "express";
@@ -30,6 +29,26 @@ export class MessageController {
     status: HttpStatus.OK,
     description: "Message sent successfully",
     type: String,
+    headers: {
+      "Content-Type": {
+        schema: {
+          type: "text/event-stream",
+          example: "text/event-stream",
+        },
+      },
+      Connection: {
+        schema: {
+          type: "string",
+          example: "keep-alive",
+        },
+      },
+      "Access-Control-Allow-Origin": {
+        schema: {
+          type: "string",
+          example: "*",
+        },
+      },
+    },
   })
   async chat(
     @Body() messageRequest: MessageRequestDTO,
@@ -51,7 +70,7 @@ export class MessageController {
     );
 
     // Simulate sending events every 5 seconds
-    const subscription = interval(100).subscribe((count) => {
+    const subscription = interval(50).subscribe((count) => {
       const message = {
         id: count,
         event: "message",

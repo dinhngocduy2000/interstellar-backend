@@ -22,9 +22,12 @@ export class ConversationService {
     this.dataSource = dataSource;
   }
 
-  async getConversation(id: string): Promise<Conversation> {
+  async getConversation(id: string, user_id: string): Promise<Conversation> {
     try {
-      const conversation = await this.conversationRepository.get({ id: id });
+      const conversation = await this.conversationRepository.get({
+        id: id,
+        user_id: user_id,
+      });
       if (!conversation) {
         console.error(`Conversation not found or already deleted`);
         throw new BadRequestException(
