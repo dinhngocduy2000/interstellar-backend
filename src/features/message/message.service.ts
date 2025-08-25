@@ -10,6 +10,9 @@ import { v4 as uuidv4 } from "uuid";
 import { ConversationRepository } from "../conversation/conversation.repository.js";
 import { Pagination } from "../../common/interface/pagination.js";
 import { ListMessageRequestDTO } from "../../dto/message/list-message-request.dto.js";
+import OpenAI from "openai";
+import { ResponseCreateParamsNonStreaming } from "openai/resources/responses/responses.js";
+import { Stream } from "openai/streaming";
 
 @Injectable()
 export class MessageService {
@@ -21,14 +24,25 @@ export class MessageService {
   async chat(
     messageRequest: MessageRequestDTO,
     conversation_id: string
-  ): Promise<string> {
+  ): Promise<
+    Stream<OpenAI.Responses.ResponseStreamEvent> & {
+      _request_id?: string | null;
+    }
+  > {
     try {
+      console.log(process.env.OPENAI_API_KEY);
+      const client = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
       const conversation = await this.conversationRepository.get({
         id: conversation_id,
       });
       if (!conversation) {
         throw new BadRequestException("Conversation not found");
       }
+
+      // --------------- Update database -------------
+
       const messageEntity: Message = {
         id: uuidv4(),
         author: "user",
@@ -41,7 +55,27 @@ export class MessageService {
       };
 
       await this.messageRepository.create(messageEntity);
-      return "Hello, How are you today?";
+
+      // --------------- OpenAI generate response -------------
+      const openai_input: ResponseCreateParamsNonStreaming = {
+        model: "gpt-4o",
+        input: [
+          {
+            role: "user",
+            content: messageRequest.content,
+          },
+        ],
+      };
+
+      const openai_response = await client.responses.create({
+        ...openai_input,
+        stream: true,
+      });
+
+      for await (const chunk of openai_response) {
+        console.log(chunk);
+      }
+      return openai_response;
     } catch (error) {
       console.log(`Error in creating Message: ${error}`);
       throw new InternalServerErrorException(error);

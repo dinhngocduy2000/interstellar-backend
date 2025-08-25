@@ -74,7 +74,7 @@ export class MessageController {
       const message = {
         id: count,
         event: "message",
-        data: response[count],
+        data: response.data[count],
       };
       // Send event in SSE format
       res.write(
