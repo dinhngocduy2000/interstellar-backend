@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
 } from "@nestjs/common";
@@ -10,7 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 import { ConversationRepository } from "../conversation/conversation.repository.js";
 import { Pagination } from "../../common/interface/pagination.js";
 import { ListMessageRequestDTO } from "../../dto/message/list-message-request.dto.js";
-import OpenAI from "openai";
+import OpenAI, { OpenAIError } from "openai";
 import { ResponseCreateParamsNonStreaming } from "openai/resources/responses/responses.js";
 import { Stream } from "openai/streaming";
 
@@ -30,9 +32,6 @@ export class MessageService {
     }
   > {
     try {
-      const client = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-      });
       const conversation = await this.conversationRepository.get({
         id: conversation_id,
       });
@@ -65,18 +64,13 @@ export class MessageService {
           },
         ],
       };
-
-      const openai_response = await client.responses.create({
-        ...openai_input,
-        stream: true,
-      });
-
-      for await (const chunk of openai_response) {
-        console.log(chunk);
-      }
+      const openai_response = await this.openai_chat(openai_input);
       return openai_response;
     } catch (error) {
       console.log(`Error in creating Message: ${error}`);
+      if (error instanceof OpenAIError) {
+        throw new HttpException(error.message, HttpStatus.TOO_MANY_REQUESTS);
+      }
       throw new InternalServerErrorException(error);
     }
   }
@@ -105,6 +99,34 @@ export class MessageService {
         `Error when geting messages for conversation ${conversation_id}: ${error}`
       );
       throw new InternalServerErrorException(error);
+    }
+  }
+
+  async openai_chat(openai_input: ResponseCreateParamsNonStreaming): Promise<
+    Stream<OpenAI.Responses.ResponseStreamEvent> & {
+      _request_id?: string | null;
+    }
+  > {
+    try {
+      const client = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
+      const openai_response = await client.responses.create({
+        ...openai_input,
+        stream: true,
+      });
+      for await (const chunk of openai_response) {
+        console.log(chunk);
+      }
+      return openai_response;
+    } catch (error) {
+      const openai_error: OpenAIError = error;
+      console.log(`Error in openai_chat: ${openai_error}`);
+      // if (openai_error.code === RateLimitError) {
+      //   console.log("Rate limit exceeded");
+      //   throw new BadRequestException("Rate limit exceeded");
+      // }
+      throw new OpenAIError(error);
     }
   }
 }
