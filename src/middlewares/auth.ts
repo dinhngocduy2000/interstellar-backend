@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { UnauthorizedException } from "@nestjs/common";
+import { JwtPayload } from "src/common/interface/jwt-payload.js";
 
 export const authMiddleware = (
   req: Request,
@@ -16,7 +17,16 @@ export const authMiddleware = (
 
   const detatchedToken = token.split(" ")[1];
   try {
-    const decoded = jwt.verify(detatchedToken, process.env.JWT_SECRET ?? "");
+    const decoded = jwt.verify(
+      detatchedToken,
+      process.env.JWT_SECRET ?? ""
+    ) as JwtPayload;
+
+    console.log("Decoded token: ", decoded);
+    console.log("Date now: ", Date.now());
+    if ((decoded?.exp ?? 0) < Date.now()) {
+      throw new UnauthorizedException("Invalid or expired token");
+    }
     req["user"] = decoded; // Attach decoded payload to request
     next();
   } catch (error) {

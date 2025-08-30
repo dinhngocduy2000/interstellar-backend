@@ -17,7 +17,10 @@ import { User } from "../../entities/index.js";
 
 @Injectable()
 export class AuthService {
-  constructor(private userRepository: UserRepository) {}
+  private expiresIn: number;
+  constructor(private userRepository: UserRepository) {
+    this.expiresIn = Number(process.env.JWT_EXPIRES_IN) ?? 0;
+  }
 
   async register(registerDto: RegisterDto): Promise<unknown> {
     try {
@@ -71,7 +74,7 @@ export class AuthService {
         iat: Date.now(),
       };
       const accessToken = jwt.sign(payload, process.env.JWT_SECRET ?? "", {
-        expiresIn: "1h",
+        expiresIn: this.expiresIn,
       });
       const refreshToken = jwt.sign(payload, process.env.JWT_SECRET ?? "", {
         expiresIn: "7d",
@@ -79,7 +82,7 @@ export class AuthService {
       return {
         accessToken: `${accessToken}`,
         refreshToken,
-        expiresIn: 3600,
+        expiresIn: this.expiresIn,
         email: user.email,
         username: user.username,
         role: user.role,
@@ -133,7 +136,7 @@ export class AuthService {
       return {
         accessToken: newAccessToken,
         refreshToken: newRefreshToken,
-        expiresIn: 3600,
+        expiresIn: this.expiresIn,
         email: user.email,
         username: user.username,
         role: user.role,
