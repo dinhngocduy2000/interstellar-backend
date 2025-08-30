@@ -26,11 +26,10 @@ export class MessageService {
   async chat(
     messageRequest: MessageRequestDTO,
     conversation_id: string
-  ): Promise<
-    Stream<OpenAI.Responses.ResponseStreamEvent> & {
-      _request_id?: string | null;
-    }
-  > {
+  ): Promise<// Stream<OpenAI.Responses.ResponseStreamEvent> & {
+  //   _request_id?: string | null;
+  // }
+  string> {
     try {
       const conversation = await this.conversationRepository.get({
         id: conversation_id,
@@ -52,7 +51,22 @@ export class MessageService {
         conversation_id: conversation_id,
       };
 
-      await this.messageRepository.create(messageEntity);
+      const openai_response = "Hello, how can i help you today?";
+      const botReplyEntity: Message = {
+        id: uuidv4(),
+        author: "bot",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_upvote: false,
+        is_downvote: false,
+        content: messageRequest.content,
+        conversation_id: conversation_id,
+      };
+
+      await Promise.all([
+        this.messageRepository.create(messageEntity),
+        this.messageRepository.create(botReplyEntity),
+      ]);
 
       // --------------- OpenAI generate response -------------
       const openai_input: ResponseCreateParamsNonStreaming = {
@@ -64,7 +78,6 @@ export class MessageService {
           },
         ],
       };
-      const openai_response = await this.openai_chat(openai_input);
       return openai_response;
     } catch (error) {
       console.log(`Error in creating Message: ${error}`);
