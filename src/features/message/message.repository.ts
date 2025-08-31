@@ -34,4 +34,15 @@ export class MessageRepository {
     });
     return list_messages;
   }
+
+  async get(messageQuery: Partial<Message>): Promise<Message | null> {
+    return await this.repository.findOne({
+      where: { ...messageQuery },
+    });
+  }
+
+  async edit(id: string, message: Partial<Message>): Promise<unknown> {
+    await this.repository.update(id, message);
+    return;
+  }
 }
