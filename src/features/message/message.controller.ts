@@ -18,6 +18,7 @@ import { Response } from "express";
 import { interval } from "rxjs";
 import { SuccessResponse } from "../../common/interface/success-response.js";
 import { MessageUpvoteRequestDTO } from "../../dto/message/message-upvote-request.dto.js";
+import { MessageDownvoteRequestDTO } from "../../dto/message/message-downvote-request.dto.js";
 @ApiTags("chat")
 @Controller("/chat")
 export class MessageController {
@@ -139,6 +140,30 @@ export class MessageController {
     await this.messageService.upvote_message(message_id, messageUpvoteRequest);
     return {
       message: "Message upvoted successfully",
+      code: HttpStatus.OK,
+    };
+  }
+
+  @Put("/downvote/:message_id")
+  @ApiOperation({
+    summary: "Downvote a message",
+    description: "Downvote a message",
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Message downvoted successfully",
+    type: SuccessResponse,
+  })
+  async downvoteMessage(
+    @Param("message_id") message_id: string,
+    @Body() messageDownvoteRequest: MessageDownvoteRequestDTO
+  ): Promise<SuccessResponse> {
+    await this.messageService.downvote_message(
+      message_id,
+      messageDownvoteRequest
+    );
+    return {
+      message: "Message downvoted successfully",
       code: HttpStatus.OK,
     };
   }

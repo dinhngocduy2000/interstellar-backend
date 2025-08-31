@@ -13,10 +13,10 @@ import { ConversationRepository } from "../conversation/conversation.repository.
 import { Pagination } from "../../common/interface/pagination.js";
 import { ListMessageRequestDTO } from "../../dto/message/list-message-request.dto.js";
 import OpenAI, { OpenAIError } from "openai";
-import { ResponseCreateParamsNonStreaming } from "openai/resources/responses/responses.js";
 import { Stream } from "openai/streaming";
 import { MessageUpvoteRequestDTO } from "../../dto/message/message-upvote-request.dto.js";
-
+import { MessageDownvoteRequestDTO } from "../../dto/message/message-downvote-request.dto.js";
+import { ResponseCreateParamsNonStreaming } from "openai/resources/responses/responses.js";
 @Injectable()
 export class MessageService {
   constructor(
@@ -69,16 +69,16 @@ export class MessageService {
         this.messageRepository.create(botReplyEntity),
       ]);
 
-      // --------------- OpenAI generate response -------------
-      const openai_input: ResponseCreateParamsNonStreaming = {
-        model: "gpt-4o",
-        input: [
-          {
-            role: "user",
-            content: messageRequest.content,
-          },
-        ],
-      };
+      // // --------------- OpenAI generate response -------------
+      // const openai_input: ResponseCreateParamsNonStreaming = {
+      //   model: "gpt-4o",
+      //   input: [
+      //     {
+      //       role: "user",
+      //       content: messageRequest.content,
+      //     },
+      //   ],
+      // };
       return openai_response;
     } catch (error) {
       console.log(`Error in creating Message: ${error}`);
@@ -130,10 +130,34 @@ export class MessageService {
       }
       await this.messageRepository.edit(message_id, {
         is_upvote: message_upvote_request.upvote,
+        is_downvote: message_upvote_request.upvote ? false : undefined,
       });
       return;
     } catch (error) {
       console.error(`Error when upvoting message ${message_id}: ${error}`);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async downvote_message(
+    message_id: string,
+    message_downvote_request: MessageDownvoteRequestDTO
+  ): Promise<unknown> {
+    try {
+      const message = await this.messageRepository.get({
+        id: message_id,
+      });
+      if (!message) {
+        console.error(`Message not found or has been deleted`);
+        throw new BadRequestException("Message not found or has been deleted");
+      }
+      await this.messageRepository.edit(message_id, {
+        is_downvote: message_downvote_request.downvote,
+        is_upvote: message_downvote_request.downvote ? false : undefined,
+      });
+      return;
+    } catch (error) {
+      console.error(`Error when downvoting message ${message_id}: ${error}`);
       throw new InternalServerErrorException(error);
     }
   }

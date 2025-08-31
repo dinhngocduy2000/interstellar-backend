@@ -1,12 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsBoolean, IsNotEmpty } from "class-validator";
 
-export class MessageUpvoteRequestDTO {
+export class MessageDownvoteRequestDTO {
   @ApiProperty({
-    description: "Upvote",
+    description: "Downvote",
     example: true,
   })
   @IsNotEmpty()
   @IsBoolean()
-  upvote: boolean;
+  downvote: boolean;
 }
