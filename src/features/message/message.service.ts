@@ -117,24 +117,23 @@ export class MessageService {
   }
 
   async upvote_message(
+    message_id: string,
     message_upvote_request: MessageUpvoteRequestDTO
   ): Promise<unknown> {
     try {
       const message = await this.messageRepository.get({
-        id: message_upvote_request.message_id,
+        id: message_id,
       });
       if (!message) {
         console.error(`Message not found or has been deleted`);
         throw new BadRequestException("Message not found or has been deleted");
       }
-      await this.messageRepository.edit(message_upvote_request.message_id, {
+      await this.messageRepository.edit(message_id, {
         is_upvote: message_upvote_request.upvote,
       });
       return;
     } catch (error) {
-      console.error(
-        `Error when upvoting message ${message_upvote_request.message_id}: ${error}`
-      );
+      console.error(`Error when upvoting message ${message_id}: ${error}`);
       throw new InternalServerErrorException(error);
     }
   }

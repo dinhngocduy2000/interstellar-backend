@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
   Res,
 } from "@nestjs/common";
@@ -15,6 +16,8 @@ import { ListMessageRequestDTO } from "../../dto/message/list-message-request.dt
 import { ListMessageResponseDTO } from "../../dto/message/list-message-response.dto.js";
 import { Response } from "express";
 import { interval } from "rxjs";
+import { SuccessResponse } from "../../common/interface/success-response.js";
+import { MessageUpvoteRequestDTO } from "../../dto/message/message-upvote-request.dto.js";
 @ApiTags("chat")
 @Controller("/chat")
 export class MessageController {
@@ -117,5 +120,26 @@ export class MessageController {
       total: total,
     };
     return response;
+  }
+
+  @Put("/upvote/:message_id")
+  @ApiOperation({
+    summary: "Upvote a message",
+    description: "Upvote a message",
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Message upvoted successfully",
+    type: SuccessResponse,
+  })
+  async upvoteMessage(
+    @Param("message_id") message_id: string,
+    @Body() messageUpvoteRequest: MessageUpvoteRequestDTO
+  ): Promise<SuccessResponse> {
+    await this.messageService.upvote_message(message_id, messageUpvoteRequest);
+    return {
+      message: "Message upvoted successfully",
+      code: HttpStatus.OK,
+    };
   }
 }
