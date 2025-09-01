@@ -22,28 +22,29 @@ import { SuccessResponse } from "../../common/interface/success-response.js";
 import { ConversationCreateRequestDTO } from "../../dto/conversation/conversation-create-request.dto.js";
 import { Request as MiddlewareRequest } from "express";
 
-@ApiTags("conversation")
-@Controller("/conversation")
+@ApiTags("conversations")
+@Controller("/conversations")
 export class ConversationController {
   constructor(private readonly conversationService: ConversationService) {}
 
-  @Get("/:id")
-  @ApiOperation({ summary: "Get a conversation" })
+  @Get("/pinned")
+  @ApiOperation({ summary: "Get all pinned conversations" })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Conversation fetched successfully",
-    type: ConversationResponseDTO,
+    description: "Conversations fetched successfully",
+    type: ListConversationResponseDTO,
   })
-  async getConversation(
-    @Param("id") id: string,
+  async getPinnedConversations(
+    @Query(ValidationPipe) query: ConversationRequestDTO,
     @Request() req: MiddlewareRequest
-  ): Promise<ConversationResponseDTO> {
+  ): Promise<ListConversationResponseDTO> {
     const user = req.user as JwtPayload;
-    const conversation = await this.conversationService.getConversation(
-      id,
-      user.id
-    );
-    return conversation;
+    const [conversations, total] =
+      await this.conversationService.getPinnedConversation(query, user.id);
+    return {
+      data: conversations,
+      total: total,
+    };
   }
 
   @Get("/")
@@ -103,5 +104,24 @@ export class ConversationController {
       code: HttpStatus.OK,
     };
     return successResponse;
+  }
+
+  @Get("/:id")
+  @ApiOperation({ summary: "Get a conversation" })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Conversation fetched successfully",
+    type: ConversationResponseDTO,
+  })
+  async getConversation(
+    @Param("id") id: string,
+    @Request() req: MiddlewareRequest
+  ): Promise<ConversationResponseDTO> {
+    const user = req.user as JwtPayload;
+    const conversation = await this.conversationService.getConversation(
+      id,
+      user.id
+    );
+    return conversation;
   }
 }

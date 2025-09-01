@@ -132,4 +132,33 @@ export class ConversationService {
       throw new InternalServerErrorException(error);
     }
   }
+
+  async getPinnedConversation(
+    query: ConversationRequestDTO,
+    user_id: string
+  ): Promise<[Conversation[], number]> {
+    try {
+      const pagination: Pagination = {
+        page: query.page,
+        limit: query.limit,
+      };
+      const orderOption: OrderOption = {
+        sort_by: "created_at",
+        sort_direction: "desc",
+      };
+      const conversationQuery: Partial<Conversation> = {
+        user_id: user_id,
+        is_pinned: true,
+      };
+      const [conversations, total] = await this.conversationRepository.list(
+        conversationQuery,
+        pagination,
+        orderOption
+      );
+      return [conversations, total];
+    } catch (error) {
+      console.error(`Error when getting pinned conversations: ${error}`);
+      throw new InternalServerErrorException(error);
+    }
+  }
 }
