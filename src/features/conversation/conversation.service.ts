@@ -11,6 +11,7 @@ import { Conversation } from "../../entities/index.js";
 import { DataSource } from "typeorm";
 import { ConversationCreateRequestDTO } from "../../dto/conversation/conversation-create-request.dto.js";
 import { v4 as uuidv4 } from "uuid";
+import { ConversationPinRequestDTO } from "../../dto/conversation/conversation-pin-request.dto.js";
 
 @Injectable()
 export class ConversationService {
@@ -158,6 +159,28 @@ export class ConversationService {
       return [conversations, total];
     } catch (error) {
       console.error(`Error when getting pinned conversations: ${error}`);
+      throw new InternalServerErrorException(error);
+    }
+  }
+  async pinConversation(
+    conversation_id: string,
+    conversationPinRequest: ConversationPinRequestDTO
+  ): Promise<unknown> {
+    try {
+      const conversation = await this.conversationRepository.get({
+        id: conversation_id,
+      });
+      if (!conversation) {
+        throw new BadRequestException(
+          "Conversation not found or already deleted"
+        );
+      }
+      await this.conversationRepository.edit(conversation_id, {
+        is_pinned: conversationPinRequest.is_pinned,
+      });
+      return;
+    } catch (error) {
+      console.error(`Error when ${`pin/unpin`} a conversation: ${error}`);
       throw new InternalServerErrorException(error);
     }
   }

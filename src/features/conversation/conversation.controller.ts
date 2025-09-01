@@ -21,6 +21,7 @@ import {
 import { SuccessResponse } from "../../common/interface/success-response.js";
 import { ConversationCreateRequestDTO } from "../../dto/conversation/conversation-create-request.dto.js";
 import { Request as MiddlewareRequest } from "express";
+import { ConversationPinRequestDTO } from "../../dto/conversation/conversation-pin-request.dto.js";
 
 @ApiTags("conversations")
 @Controller("/conversations")
@@ -44,6 +45,26 @@ export class ConversationController {
     return {
       data: conversations,
       total: total,
+    };
+  }
+
+  @Post("/pinned/:id")
+  @ApiOperation({
+    summary: "Pin/unpin a conversation",
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Conversation pinned/unpinned successfully",
+    type: SuccessResponse,
+  })
+  async pinConversation(
+    @Param("id") id: string,
+    @Body() conversationPinRequest: ConversationPinRequestDTO
+  ): Promise<SuccessResponse> {
+    await this.conversationService.pinConversation(id, conversationPinRequest);
+    return {
+      message: "Conversation pinned successfully",
+      code: HttpStatus.OK,
     };
   }
 
