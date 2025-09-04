@@ -101,7 +101,6 @@ export class ConversationService {
         description: conversationCreateRequest.description,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        deleted_at: undefined,
         is_pinned: false,
         model: conversationCreateRequest.model,
         user_id: user_id,
@@ -180,7 +179,9 @@ export class ConversationService {
       });
       return;
     } catch (error) {
-      console.error(`Error when ${`pin/unpin`} a conversation: ${error}`);
+      console.error(
+        `Error when ${`${conversationPinRequest.is_pinned ? "pin" : "unpin"}`} a conversation: ${error}`
+      );
       throw new InternalServerErrorException(error);
     }
   }

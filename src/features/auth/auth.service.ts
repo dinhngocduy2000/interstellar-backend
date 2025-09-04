@@ -55,16 +55,16 @@ export class AuthService {
 
   async login(loginDto: LoginDto): Promise<LoginResponseDto> {
     try {
-      const user = await this.userRepository.findByUsername(loginDto.username);
+      const user = await this.userRepository.findByEmail(loginDto.email);
       if (!user) {
-        throw new BadRequestException("Invalid username or password");
+        throw new BadRequestException("Invalid email or password");
       }
       const isPasswordValid = await bcrypt.compare(
         loginDto.password,
         user.password
       );
       if (!isPasswordValid) {
-        throw new BadRequestException("Invalid username or password");
+        throw new BadRequestException("Invalid email or password");
       }
       const payload: JwtPayload = {
         id: user.id,

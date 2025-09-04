@@ -7,6 +7,6 @@ export const loggerMiddleware = (
 ) => {
   console.time(`Request Time for: ${req.url} - ${req.method}`);
   console.log(`${req.method} ${req.url}`);
-  console.timeEnd(`Request Time for: ${req.url} - ${req.method}`);
   next();
+  console.timeEnd(`Request Time for: ${req.url} - ${req.method}`);
 };
