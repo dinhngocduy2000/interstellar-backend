@@ -32,6 +32,9 @@ services:
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_HOST=${POSTGRES_HOST}
       - PORT=${PORT}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     depends_on:
       - postgres_interstellar
     restart: always
