@@ -89,7 +89,7 @@ export class AuthService {
       } as LoginResponseDto;
     } catch (error) {
       console.error(`ERROR LOGGING IN: ${error}`);
-      throw new InternalServerErrorException(error);
+      throw error;
     }
   }
 

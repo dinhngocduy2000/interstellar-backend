@@ -8,7 +8,12 @@ import { loggerMiddleware } from "./middlewares/logger.js";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // Enable CORS
-  app.enableCors({ origin: "*" });
+  app.enableCors({
+    origin: "http://localhost:3001", // Allow only this origin
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allowed HTTP methods
+    allowedHeaders: "*", // Allowed headers
+    credentials: false, // Allow cookies and auth headers
+  });
 
   // Set global prefix
   app.setGlobalPrefix("/api/v1/");
