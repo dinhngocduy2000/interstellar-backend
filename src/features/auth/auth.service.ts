@@ -146,4 +146,13 @@ export class AuthService {
       throw new InternalServerErrorException(error);
     }
   }
+
+  async track(jwt_payload: JwtPayload): Promise<unknown> {
+    const expiresTimeUnix = jwt_payload.exp ?? 0;
+    const currentDateUnix = Date.now();
+    if (expiresTimeUnix - currentDateUnix < this.expiresIn / 3) {
+      throw new UnauthorizedException("Session expired");
+    }
+    return;
+  }
 }

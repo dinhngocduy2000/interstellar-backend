@@ -1,10 +1,19 @@
-import { Body, Controller, HttpStatus, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  Request,
+} from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthService } from "./auth.service.js";
 import { RegisterDto } from "../../dto/register.dto.js";
 import { SuccessResponse } from "../../common/interface/success-response.js";
 import { LoginResponseDto } from "../../dto/login-response.dto.js";
 import { LoginDto } from "../../dto/login.dto.js";
+import { Request as MiddlewareRequest } from "express";
+import { JwtPayload } from "src/common/interface/jwt-payload.js";
 
 @ApiTags("auth")
 @Controller("/auth")
@@ -48,5 +57,20 @@ export class AuthController {
     @Body() { refreshToken }: { refreshToken: string }
   ): Promise<LoginResponseDto> {
     return await this.authService.refreshToken(refreshToken);
+  }
+
+  @Get("/track")
+  @ApiOperation({ summary: "Track a user's session" })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "User session tracked successfully",
+    type: SuccessResponse,
+  })
+  async track(@Request() req: MiddlewareRequest): Promise<SuccessResponse> {
+    await this.authService.track(req.user as JwtPayload);
+    return {
+      message: "Session not expired",
+      code: HttpStatus.OK,
+    };
   }
 }
