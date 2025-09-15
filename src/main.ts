@@ -9,10 +9,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // Enable CORS
   app.enableCors({
-    origin: "http://localhost:3001", // Allow only this origin
+    origin: ["http://localhost:3001"], // Allow only this origin
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allowed HTTP methods
-    allowedHeaders: "*", // Allowed headers
-    credentials: false, // Allow cookies and auth headers
+    allowedHeaders: ["Content-Type", "Authorization"], // Add 'Content-Type' here
+    credentials: true, // Allow cookies and auth headers
   });
 
   // Set global prefix

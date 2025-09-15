@@ -122,7 +122,7 @@ export class AuthService {
         newTokenPayload,
         process.env.JWT_SECRET ?? "",
         {
-          expiresIn: "1h",
+          expiresIn: this.expiresIn,
         }
       );
       const newRefreshToken = jwt.sign(
