@@ -4,9 +4,11 @@ import { SwaggerModule } from "@nestjs/swagger";
 import { DocumentBuilder } from "@nestjs/swagger";
 import { AppModule } from "./app.module.js";
 import { loggerMiddleware } from "./middlewares/logger.js";
+import cookieParser from "cookie-parser";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(cookieParser()); // Apply cookie-parser middleware
   // Enable CORS
   app.enableCors({
     origin: ["http://localhost:3001"], // Allow only this origin
