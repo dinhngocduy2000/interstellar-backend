@@ -93,22 +93,18 @@ export class ConversationController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: "Conversation created successfully",
-    type: SuccessResponse,
+    type: ConversationResponseDTO,
   })
   async createConversation(
     @Body() conversationCreateRequest: ConversationCreateRequestDTO,
     @Request() req: MiddlewareRequest
-  ): Promise<SuccessResponse> {
+  ): Promise<ConversationResponseDTO> {
     const user = req.user as JwtPayload;
-    await this.conversationService.createConversation(
+    const newConversation = await this.conversationService.createConversation(
       conversationCreateRequest,
       user.id
     );
-    const successResponse: SuccessResponse = {
-      message: "Conversation created successfully",
-      code: HttpStatus.OK,
-    };
-    return successResponse;
+    return newConversation;
   }
 
   @Delete("/:id")

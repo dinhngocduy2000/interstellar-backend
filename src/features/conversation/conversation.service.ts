@@ -93,7 +93,7 @@ export class ConversationService {
   async createConversation(
     conversationCreateRequest: ConversationCreateRequestDTO,
     user_id: string
-  ): Promise<unknown> {
+  ): Promise<Conversation> {
     try {
       const conversation: Conversation = {
         id: uuidv4(),
@@ -106,8 +106,9 @@ export class ConversationService {
         user_id: user_id,
         messages: [],
       };
-      await this.conversationRepository.create(conversation);
-      return;
+      const newConversation =
+        await this.conversationRepository.create(conversation);
+      return newConversation;
     } catch (error) {
       console.error(`Error when creating a Conversation: ${error}`);
       throw new InternalServerErrorException(error);

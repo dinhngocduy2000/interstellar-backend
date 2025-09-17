@@ -14,7 +14,7 @@ export const authMiddleware = (
     return res.status(401).json({ message: "Unauthorized" });
   }
   // TODO: CHECK FOR USER ROLE LATER
-
+  console.log("Token: ", token);
   try {
     const decoded = jwt.verify(
       token,

@@ -12,7 +12,7 @@ export class ConversationRepository {
     private readonly repository: Repository<Conversation>
   ) {}
 
-  async create(conversation: Conversation): Promise<unknown> {
+  async create(conversation: Conversation): Promise<Conversation> {
     const newConversation = this.repository.create(conversation);
     return await this.repository.save(newConversation);
   }
