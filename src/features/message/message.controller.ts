@@ -54,7 +54,7 @@ export class MessageController {
       // Cleanup: e.g., remove from active connections map
       res.end();
     });
-    return interval(20).pipe(
+    return interval(10).pipe(
       // Emit every 500ms
       map(() => {
         // If we've sent all characters, start over or stop based on your needs
