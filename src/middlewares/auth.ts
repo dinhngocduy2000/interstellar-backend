@@ -1,7 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { UnauthorizedException } from "@nestjs/common";
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { JwtPayload } from "../common/interface/jwt-payload.js";
+import { JwtService } from "@nestjs/jwt";
 
 export const authMiddleware = (
   req: Request,
@@ -33,3 +39,27 @@ export const authMiddleware = (
     throw new UnauthorizedException("Invalid or expired token");
   }
 };
+
+@Injectable()
+export class JwtCookieAuthGuard implements CanActivate {
+  constructor(private jwtService: JwtService) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest<Request>();
+    const token = request.cookies["accessToken"]; // Assuming the JWT is stored in a cookie named 'jwt'
+
+    if (!token) {
+      throw new UnauthorizedException("No JWT found in cookie");
+    }
+
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_SECRET ?? "", // Replace with your JWT secret
+      });
+      request["user"] = payload; // Attach the decoded payload to the request
+      return true;
+    } catch (error) {
+      throw new UnauthorizedException("Invalid JWT");
+    }
+  }
+}

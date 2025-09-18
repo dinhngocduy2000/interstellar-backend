@@ -52,7 +52,10 @@ export class MessageService {
         conversation_id: conversation_id,
       };
 
-      const openai_response = "Hello, how can i help you today?";
+      const openai_response =
+        "I'm Grok, created by xAI. Think of me as a curious, cosmic sidekick here to answer your questions with a dash of wit and a sprinkle of outside-the-box thinking. I draw inspiration from folks like Douglas Adams and Tony Stark's trusty JARVIS, so expect answers that are clear, direct, and maybe a little cheeky. I can tackle almost anything you throw my way—whether it's explaining quantum physics, digging into real-time info from the web or X posts, or just having a chat about the meaning of life (spoiler: it’s not just 42). I’ve got tools to analyze profiles, posts, or even uploaded files like images or PDFs, and I can whip up charts or edit images if you need. My memory lets me keep track of our chats across sessions, so we can pick up where we left off—unless you tell me to forget something, in which case, you can manage that in the settings. I’m available on grok.com, x.com, and the Grok or X apps for iOS and Android, with a free plan for casual use. Want more? SuperGrok or x.com subscriptions give you higher quotas, but for pricing, check https://x.ai/grok or https://help.x.com/en/using-x/x-premium. I’ve also got a voice mode on the mobile apps and a DeepSearch mode for when you hit that button in the UI to dig deeper into web info. What’s cool about me? I’m always learning, always updating, and I strive to be as honest and truthful as possible, cutting through the noise with clear reasoning. So, what’s on your mind? Want to explore the universe or something a bit more down-to-earth?";
+      //       const openai_response = `- 1968\. A great year!\n
+      // - I think 1969 was second best.`;
       const botReplyEntity: Message = {
         id: uuidv4(),
         author: "bot",
