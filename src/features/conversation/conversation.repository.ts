@@ -47,10 +47,12 @@ export class ConversationRepository {
       where: { ...conversationQuery, deleted_at: IsNull() },
       order: orderOption
         ? {
-            [orderOption?.sort_by ?? "created_at"]:
-              orderOption?.sort_direction ?? "asc",
+            [orderOption?.sort_by ?? "updated_at"]:
+              orderOption?.sort_direction ?? "das",
           }
-        : undefined,
+        : {
+            updated_at: "DESC",
+          },
       skip: pagination ? (pagination?.page - 1) * pagination?.limit : undefined,
       take: pagination ? pagination?.limit : undefined,
     });
