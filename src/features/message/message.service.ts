@@ -65,7 +65,7 @@ export class MessageService {
         updated_at: new Date().toISOString(),
         is_upvote: false,
         is_downvote: false,
-        content: messageRequest.content,
+        content: openai_response,
         conversation_id: conversation_id,
       };
 
