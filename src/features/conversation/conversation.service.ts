@@ -105,6 +105,8 @@ export class ConversationService {
         model: conversationCreateRequest.model,
         user_id: user_id,
         messages: [],
+        is_new: true,
+        first_message: conversationCreateRequest.title,
       };
       const newConversation =
         await this.conversationRepository.create(conversation);

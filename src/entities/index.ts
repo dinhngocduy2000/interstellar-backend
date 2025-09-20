@@ -32,6 +32,12 @@ export class Conversation {
   is_pinned: boolean;
 
   @Column()
+  first_message: string;
+
+  @Column({ default: false })
+  is_new: boolean;
+
+  @Column()
   model: string;
 
   @Column()

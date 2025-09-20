@@ -67,6 +67,18 @@ export class ConversationResponseDTO implements Conversation {
     example: "2021-01-01",
   })
   deleted_at?: string;
+
+  @ApiProperty({
+    description: "The first_message of the conversation",
+    example: "123e4567-e89b-12d3-a456-426614174000",
+  })
+  first_message: string;
+
+  @ApiProperty({
+    description: "The conversation is newly created or not",
+    example: false,
+  })
+  is_new: boolean;
 }
 
 export class ListConversationResponseDTO
