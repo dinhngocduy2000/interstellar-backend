@@ -72,6 +72,9 @@ export class MessageService {
       await Promise.all([
         this.messageRepository.create(messageEntity),
         this.messageRepository.create(botReplyEntity),
+        this.conversationRepository.edit(conversation_id, {
+          is_new: false,
+        }),
       ]);
 
       // // --------------- OpenAI generate response -------------
