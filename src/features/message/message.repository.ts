@@ -27,7 +27,7 @@ export class MessageRepository {
         conversation_id: conversation_id,
       },
       order: {
-        created_at: "DESC",
+        created_at: "ASC",
       },
       skip: (pagination.page - 1) * pagination.limit,
       take: pagination.limit,
