@@ -115,7 +115,8 @@ export class MessageService {
         conversation_id,
         pagination
       );
-      return res;
+      const list_messages = [...res[0]].reverse();
+      return [list_messages, res[1]];
     } catch (error) {
       console.log(
         `Error when geting messages for conversation ${conversation_id}: ${error}`
