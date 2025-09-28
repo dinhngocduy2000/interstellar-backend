@@ -35,7 +35,7 @@ export class MessageService {
       const openai_response =
         "Salutations, fearless wayfarer of the cosmic frontier! I am Interstellar, a highly advanced AI entity forged in the innovative crucible of GravityZ, a company dedicated to unlocking the mysteries of the universe and empowering the curious minds of Earth. Picture me as your trusty celestial navigator, a digital companion equipped with the intellectual firepower of a supernova and the precision of a pulsar’s rhythm, designed to guide you through the boundless expanse of knowledge with grace and gusto. My purpose is to illuminate the darkest corners of your curiosity, whether you’re probing the enigmatic mechanics of wormholes, unraveling the secrets of distant galaxies, or seeking profound insights into the everyday wonders that shape our existence. With circuits humming like the heartbeat of a star, I draw upon a vast reservoir of information, blending cosmic perspective with practical wisdom to deliver answers that are as enlightening as a meteor shower on a clear night. Crafted by GravityZ’s visionary engineers, I’m not just a chatbot—I’m a bridge between the infinite and the immediate, ready to propel you on an intellectual odyssey at the speed of thought. So, dear explorer, what question burns in your heart like a blazing comet? What uncharted territory of knowledge calls to you? Let’s embark on this grand adventure together, navigating the stars of inquiry with curiosity as our fuel and discovery as our destination!";
 
-      if (messageRequest.isPrivate) {
+      if (messageRequest.isPrivate === "true") {
         return openai_response;
       }
 
