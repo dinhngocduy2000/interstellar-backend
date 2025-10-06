@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Pagination } from "../../common/interface/pagination.js";
 import { Conversation } from "../../entities/index.js";
-import { IsNull, Repository } from "typeorm";
+import { IsNull, Repository, ILike } from "typeorm";
 import { OrderOption } from "../../common/interface/order-option.js";
 
 @Injectable()
@@ -43,8 +43,18 @@ export class ConversationRepository {
     pagination?: Pagination,
     orderOption?: OrderOption
   ): Promise<[Conversation[], number]> {
+    const where: Record<string, unknown> = {
+      ...conversationQuery,
+      deleted_at: IsNull(),
+    };
+
+    if (conversationQuery.title) {
+      where.title = ILike(`%${conversationQuery.title}%`);
+    }
+
     return await this.repository.findAndCount({
-      where: { ...conversationQuery, deleted_at: IsNull() },
+      where,
+
       order: orderOption
         ? {
             [orderOption?.sort_by ?? "updated_at"]:
