@@ -90,20 +90,32 @@ export class User {
   @Column({ unique: true, nullable: false })
   username!: string;
 
-  @Column({ nullable: false })
-  password!: string;
+  @Column({ nullable: true })
+  password?: string;
 
-  @Column({ nullable: false })
-  firstName!: string;
+  @Column({ nullable: true })
+  firstName?: string;
 
-  @Column({ nullable: false })
-  lastName!: string;
+  @Column({ nullable: true })
+  lastName?: string;
 
   @Column({ nullable: false })
   role!: string;
 
   @Column({ default: true })
   isActive!: boolean;
+
+  /** OAuth provider name (e.g., 'google', 'microsoft') */
+  @Column({ nullable: true })
+  oauthProvider?: string;
+
+  /** OAuth provider unique ID */
+  @Column({ nullable: true })
+  oauthProviderId?: string;
+
+  /** Email verification status */
+  @Column({ default: false })
+  emailVerified?: boolean;
 
   @CreateDateColumn({ nullable: true })
   createdAt!: Date;

@@ -59,6 +59,14 @@ export class AuthService {
       if (!user) {
         throw new BadRequestException("Invalid email or password");
       }
+      
+      // Check if user is OAuth-only (no password)
+      if (!user.password) {
+        throw new BadRequestException(
+          "This account was created using OAuth. Please sign in with your OAuth provider."
+        );
+      }
+      
       const isPasswordValid = await bcrypt.compare(
         loginDto.password,
         user.password

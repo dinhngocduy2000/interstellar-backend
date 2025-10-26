@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AuthModule } from "./features/auth/auth.module.js";
 import { ConversationModule } from "./features/conversation/conversation.module.js";
 import { MessageModule } from "./features/message/message.module.js";
+import { SSOModule } from "./features/sso/sso.module.js";
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { MessageModule } from "./features/message/message.module.js";
     AuthModule,
     ConversationModule,
     MessageModule,
+    SSOModule,
   ],
   providers: [
     {
