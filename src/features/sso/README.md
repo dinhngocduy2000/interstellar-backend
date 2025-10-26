@@ -57,9 +57,11 @@ GoogleSSOStrategy
 
 ## API Endpoints
 
-- `GET /api/auth/sso/google/login` - Start OAuth flow
-- `GET /api/auth/sso/google/callback?code=xxx` - Handle callback
-- `GET /api/auth/sso/providers` - List supported providers
+Note: Your app uses `/api/v1` as the global prefix (configured in `main.ts`).
+
+- `GET /api/v1/auth/sso/google/login` - Start OAuth flow
+- `GET /api/v1/auth/sso/google/callback?code=xxx` - Handle callback
+- `GET /api/v1/auth/sso/providers` - List supported providers
 
 ## Adding a New Provider
 
