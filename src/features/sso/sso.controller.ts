@@ -65,24 +65,36 @@ export class SSOController {
 
   /**
    * Handle OAuth callback from provider
+   * Redirects to frontend with tokens in URL hash for security
    * 
    * @param provider - SSO provider
    * @param code - Authorization code from OAuth flow
    * @param state - State parameter (for CSRF protection)
-   * @returns Success response with tokens
+   * @returns Redirect to frontend with tokens
    */
   @Get(':provider/callback')
   @ApiOperation({ summary: 'Handle OAuth callback from provider' })
   @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Authentication successful, tokens generated',
+    status: 302,
+    description: 'Redirect to frontend with authentication tokens',
   })
   @ApiParam({ name: 'provider', enum: SSOProvider })
+  @Redirect()
   async callback(
     @Param('provider') provider: string,
     @Query('code') code: string,
-    @Query('state') state?: string
+    @Query('state') state?: string,
+    @Query('error') error?: string
   ) {
+    // Handle OAuth errors
+    if (error) {
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
+      return {
+        url: `${frontendUrl}/auth/callback?error=${encodeURIComponent(error)}`,
+        statusCode: HttpStatus.FOUND,
+      };
+    }
+
     if (!code) {
       throw new BadRequestException('Authorization code is required');
     }
@@ -92,10 +104,39 @@ export class SSOController {
       throw new BadRequestException(`Unsupported provider: ${provider}`);
     }
 
-    const result = await this.ssoService.authenticate(providerType, code);
+    try {
+      // Exchange code for tokens and user info
+      const result = await this.ssoService.authenticate(providerType, code);
 
-    // Return result (you might want to redirect to frontend with tokens)
-    return result;
+      // Frontend URL to redirect to
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
+      
+      // Build redirect URL with tokens in hash (secure, doesn't appear in server logs)
+      const redirectUrl = new URL(`${frontendUrl}/auth/callback`);
+      
+      // Add tokens to URL hash for security
+      const hashParams = new URLSearchParams();
+      hashParams.set('access_token', result.accessToken);
+      hashParams.set('refresh_token', result.refreshToken);
+      hashParams.set('expires_in', result.expiresIn.toString());
+      hashParams.set('email', result.email);
+      hashParams.set('username', result.username);
+      hashParams.set('role', result.role);
+      hashParams.set('is_new_user', result.isNewUser ? 'true' : 'false');
+      hashParams.set('provider', result.provider);
+
+      return {
+        url: `${redirectUrl.toString()}#${hashParams.toString()}`,
+        statusCode: HttpStatus.FOUND,
+      };
+    } catch (error) {
+      console.error('OAuth callback error:', error);
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
+      return {
+        url: `${frontendUrl}/auth/callback?error=${encodeURIComponent('authentication_failed')}`,
+        statusCode: HttpStatus.FOUND,
+      };
+    }
   }
 
   /**
