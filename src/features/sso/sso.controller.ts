@@ -112,7 +112,7 @@ export class SSOController {
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
       
       // Build redirect URL with tokens in hash (secure, doesn't appear in server logs)
-      const redirectUrl = new URL(`${frontendUrl}/auth/callback`);
+      const redirectUrl = new URL(`http://localhost:3001/sso`);
       
       // Add tokens to URL hash for security
       const hashParams = new URLSearchParams();
@@ -126,7 +126,7 @@ export class SSOController {
       hashParams.set('provider', result.provider);
 
       return {
-        url: `${redirectUrl.toString()}#${hashParams.toString()}`,
+        url: `${redirectUrl.toString()}?${hashParams.toString()}`,
         statusCode: HttpStatus.FOUND,
       };
     } catch (error) {
